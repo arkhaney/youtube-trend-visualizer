@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Trend Visualizer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>YouTube Trend Visualizer</h1>
+        <p>실시간 인기 트렌드와 급상승 영상을 한눈에 확인하세요.</p>
+    </header>
+
+    <main>
+        <section id="trend-section">
+            <div id="word-cloud" class="word-cloud">
+                <!-- Keywords will be injected here -->
+            </div>
+        </section>
+
+        <section id="summary-section">
+            <div class="card">
+                <h2>AI 트렌드 요약</h2>
+                <p id="ai-summary">데이터를 분석 중입니다...</p>
+            </div>
+        </section>
+
+        <section id="video-section">
+            <h2>급상승 영상</h2>
+            <div id="video-grid" class="video-grid">
+                <!-- Video cards will be injected here -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal for keyword-specific videos -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modal-title">관련 영상</h2>
+            <div id="modal-video-grid" class="video-grid"></div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 YouTube Trend Visualizer</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
