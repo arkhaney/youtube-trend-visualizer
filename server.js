@@ -3,7 +3,7 @@ const cors = require('cors');
 const cron = require('node-cron');
 const { pool, initDb } = require('./db');
 const { fetchMostPopularVideos, fetchRecentVideos, getRecentUploadCount } = require('./youtube');
-const { generateTrendSummary } = require('./openai');
+const { generateTrendSummary, filterKeywords } = require('./openai');
 require('dotenv').config();
 
 const app = express();
@@ -97,11 +97,20 @@ const collectAndAnalyzeData = async () => {
       });
     });
 
-    const topKeywords = Array.from(keywordMap.entries())
+    const topRawKeywords = Array.from(keywordMap.entries())
       .sort((a, b) => b[1] - a[1])
-      .slice(0, 30); // Analysing top 30 keywords
+      .slice(0, 40); // Initial top 40
 
-    for (const [keyword, frequency] of topKeywords) {
+    const rawKeywordList = topRawKeywords.map(k => k[0]);
+    console.log('Filtering keywords via AI...');
+    const filteredKeywords = await filterKeywords(rawKeywordList);
+    console.log(`AI filtered keywords: ${filteredKeywords.length} remaining.`);
+
+    // Clear old keywords to keep only fresh trends
+    await pool.query('DELETE FROM keywords');
+
+    for (const keyword of filteredKeywords) {
+      const frequency = keywordMap.get(keyword) || 1;
       const recentCount = await getRecentUploadCount(keyword);
       
       const avgScoreRes = await pool.query(`
@@ -124,7 +133,7 @@ const collectAndAnalyzeData = async () => {
     }
 
     // 5. AI Summary
-    const finalKeywords = topKeywords.map(k => k[0]).slice(0, 15);
+    const finalKeywords = filteredKeywords.slice(0, 15);
     const videoTitles = popularVideos.slice(0, 15).map(v => v.snippet.title);
     const summary = await generateTrendSummary(finalKeywords, videoTitles);
     
