@@ -33,6 +33,8 @@ const fetchRecentVideos = async () => {
         q: query,
         type: 'video',
         order: 'date',
+        regionCode: 'KR',
+        relevanceLanguage: 'ko',
         maxResults: 50,
         key: API_KEY
       }
@@ -72,6 +74,8 @@ const getRecentUploadCount = async (keyword) => {
         q: keyword,
         type: 'video',
         publishedAfter: publishedAfter,
+        regionCode: 'KR',
+        relevanceLanguage: 'ko',
         maxResults: 50,
         key: API_KEY
       }
